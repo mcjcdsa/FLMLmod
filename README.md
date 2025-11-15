@@ -1,6 +1,6 @@
 # FLML - Freedom Land Mod Loader Core
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/YOUR_USERNAME/flml-core)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/mcjcdsa/FLMLmod)
 [![Java](https://img.shields.io/badge/Java-11+-orange.svg)](https://www.java.com/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
@@ -170,7 +170,7 @@ mvn clean install -Dmaven.test.skip=true
 
 ## 下载
 
-从 [Releases](https://github.com/YOUR_USERNAME/flml-core/releases) 下载最新版本的JAR文件。
+从 [Releases](https://github.com/mcjcdsa/FLMLmod/releases) 下载最新版本的JAR文件。
 
 ## 许可证
 
@@ -178,7 +178,7 @@ mvn clean install -Dmaven.test.skip=true
 
 ## 链接
 
-- [问题反馈](https://github.com/YOUR_USERNAME/flml-core/issues)
+- [问题反馈](https://github.com/mcjcdsa/FLMLmod/issues)
 - [官方文档](docs/)
 - [模组开发指南](../../mods/模组开发指南.md)
 
