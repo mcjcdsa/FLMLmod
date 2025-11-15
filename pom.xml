@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- 项目基本信息（与游戏版本绑定） -->
+    <groupId>com.freedomland.official</groupId>
+    <artifactId>flml-core</artifactId>
+    <version>1.0.0</version>
+    <name>Freedom Land Mod Loader Core</name>
+    <description>《自由之境》官方模组加载器与API核心包（必装）</description>
+    <packaging>jar</packaging>
+
+    <!-- 环境配置 -->
+    <properties>
+        <java.version>11</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <asm.version>9.4</asm.version>
+        <slf4j.version>1.7.36</slf4j.version>
+        <maven.compiler.version>3.11.0</maven.compiler.version>
+        <maven.jar.version>3.3.0</maven.jar.version>
+        <maven.shade.version>3.4.1</maven.shade.version>
+    </properties>
+
+    <!-- 父项目配置 -->
+    <parent>
+        <groupId>com.freedomland</groupId>
+        <artifactId>freedomland</artifactId>
+        <version>1.0.0</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <!-- 依赖配置（内置必要依赖，避免外部依赖） -->
+    <dependencies>
+        <!-- 依赖GameCore模块（获取modloader和api类） -->
+        <dependency>
+            <groupId>com.freedomland</groupId>
+            <artifactId>freedomland-gamecore</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        
+        <!-- 字节码增强（Hook游戏核心逻辑） -->
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>${asm.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-commons</artifactId>
+            <version>${asm.version}</version>
+        </dependency>
+        
+        <!-- 日志组件（统一日志输出） -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        
+        <!-- Gson（用于JSON解析） -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+        </dependency>
+    </dependencies>
+
+    <!-- 打包插件配置（核心） -->
+    <build>
+        <plugins>
+            <!-- 编译插件（确保编译兼容性） -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler.version}</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <compilerArgs>
+                        <arg>-parameters</arg> <!-- 保留方法参数名，便于模组调试 -->
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+
+            <!-- JAR打包插件 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven.jar.version}</version>
+                <configuration>
+                    <!-- 输出目录（默认target/，自定义为release/） -->
+                    <outputDirectory>${project.basedir}/release</outputDirectory>
+                    <!-- 打包文件名（格式：artifactId-version.jar，与游戏版本绑定） -->
+                    <finalName>flml-core-${project.version}</finalName>
+                    <!-- 清单文件配置（关键：指定FLML启动入口） -->
+                    <archive>
+                        <manifest>
+                            <mainClass>com.freedomland.flml.loader.FLModLoaderBootstrap</mainClass>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <packageName>com.freedomland.flml</packageName>
+                        </manifest>
+                        <!-- 标记为官方核心包，供游戏识别 -->
+                        <manifestEntries>
+                            <FLML-Official>true</FLML-Official>
+                            <Game-Version>${project.version}</Game-Version>
+                            <API-Version>${project.version}</API-Version>
+                            <Build-Time>${maven.build.timestamp}</Build-Time>
+                        </manifestEntries>
+                    </archive>
+                    <!-- 打包范围（仅包含flml和api包，排除game包） -->
+                    <includes>
+                        <include>com/freedomland/flml/**/*</include>
+                        <include>META-INF/**/*</include>
+                    </includes>
+                    <!-- 排除game包 -->
+                    <excludes>
+                        <exclude>com/freedomland/game/**/*</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
+            <!-- 依赖合并插件（将所有依赖打入JAR，实现独立运行） -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>${maven.shade.version}</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <!-- 输出目录 -->
+                            <outputDirectory>${project.basedir}/release</outputDirectory>
+                            <!-- 输出文件名 -->
+                            <finalName>flml-core-${project.version}</finalName>
+                            <!-- 重命名依赖包路径，避免与模组/游戏冲突 -->
+                            <relocations>
+                                <relocation>
+                                    <pattern>org.ow2.asm</pattern>
+                                    <shadedPattern>com.freedomland.flml.shaded.asm</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.slf4j</pattern>
+                                    <shadedPattern>com.freedomland.flml.shaded.slf4j</shadedPattern>
+                                </relocation>
+                            </relocations>
+                            <!-- 过滤不必要的文件，减小JAR体积 -->
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                        <exclude>META-INF/MANIFEST.MF</exclude>
+                                    </excludes>
+                                </filter>
+                                <!-- 只包含modloader和api包，排除game包 -->
+                                <filter>
+                                    <artifact>com.freedomland:freedomland-gamecore</artifact>
+                                    <includes>
+                                        <include>com/freedomland/modloader/**</include>
+                                        <include>com/freedomland/api/**</include>
+                                    </includes>
+                                    <excludes>
+                                        <exclude>com/freedomland/game/**</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <!-- 创建可执行JAR -->
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+

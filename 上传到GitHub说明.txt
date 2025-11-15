@@ -1,0 +1,146 @@
+==========================================
+    FLML核心包上传到GitHub说明
+==========================================
+
+一、准备工作
+
+1. 安装Git
+   - 下载: https://git-scm.com/download/win
+   - 安装完成后，重启命令行窗口
+
+2. 配置Git用户信息
+   git config --global user.name "Your Name"
+   git config --global user.email "your.email@example.com"
+
+3. 在GitHub上创建新仓库
+   - 登录GitHub: https://github.com
+   - 点击右上角 "+" → "New repository"
+   - 仓库名: flml-core 或 FreedomLand-ModLoader-Core
+   - 选择 Public 或 Private
+   - 不要勾选 "Initialize this repository with a README"
+   - 点击 "Create repository"
+
+
+二、使用脚本上传（推荐）
+
+1. 进入flml-core目录:
+   cd flml-core
+
+2. 运行上传脚本:
+   上传到GitHub.bat
+
+3. 按照提示操作:
+   - 输入GitHub仓库URL
+   - 输入提交消息
+   - 确认推送
+
+
+三、手动上传
+
+步骤1: 初始化Git仓库
+   cd flml-core
+   git init
+
+步骤2: 添加所有文件
+   git add .
+
+步骤3: 提交文件
+   git commit -m "Initial commit: FLML Core v1.0.0"
+
+步骤4: 添加远程仓库
+   git remote add origin https://github.com/YOUR_USERNAME/flml-core.git
+   (替换YOUR_USERNAME为你的GitHub用户名)
+
+步骤5: 推送到GitHub
+   git branch -M main
+   git push -u origin main
+
+
+四、GitHub认证
+
+如果推送时提示需要认证，有两种方式:
+
+方式1: Personal Access Token（推荐）
+  1. 访问: https://github.com/settings/tokens
+  2. 点击 "Generate new token (classic)"
+  3. 选择权限: repo (全部)
+  4. 生成token并复制
+  5. 推送时，用户名输入GitHub用户名，密码输入token
+
+方式2: SSH密钥
+  1. 生成SSH密钥:
+     ssh-keygen -t ed25519 -C "your.email@example.com"
+  2. 复制公钥:
+     type %USERPROFILE%\.ssh\id_ed25519.pub
+  3. 添加到GitHub:
+     - 访问: https://github.com/settings/ssh/new
+     - 粘贴公钥
+     - 保存
+  4. 使用SSH URL:
+     git remote set-url origin git@github.com:YOUR_USERNAME/flml-core.git
+
+
+五、上传的文件
+
+应该上传的文件:
+  - pom.xml (Maven配置)
+  - build.gradle (Gradle配置)
+  - README.md (项目说明)
+  - .gitignore (Git忽略规则)
+  - src/ (源代码)
+  - build_flml_core.bat (打包脚本)
+  - build_flml_core.sh (打包脚本)
+  - 其他文档文件
+
+不应该上传的文件（已通过.gitignore排除）:
+  - target/ (Maven构建输出)
+  - build/ (Gradle构建输出)
+  - release/ (打包输出)
+  - *.jar (JAR文件)
+  - .idea/ (IDE配置)
+  - *.class (编译文件)
+
+
+六、创建Release（可选）
+
+1. 在GitHub仓库页面点击 "Releases"
+2. 点击 "Draft a new release"
+3. 填写版本信息:
+   - Tag: v1.0.0
+   - Title: FLML Core v1.0.0
+   - Description: 版本说明
+4. 上传 flml-core-1.0.0.jar 到 Assets
+5. 点击 "Publish release"
+
+
+七、常见问题
+
+Q: 推送时提示认证失败
+A: 
+  1. 检查用户名和密码是否正确
+  2. 如果使用HTTPS，需要使用Personal Access Token作为密码
+  3. 如果使用SSH，检查SSH密钥是否正确配置
+
+Q: 提示仓库不存在
+A:
+  1. 确认仓库URL正确
+  2. 确认有仓库的访问权限
+  3. 确认仓库已创建
+
+Q: 如何更新仓库?
+A:
+  git add .
+  git commit -m "更新说明"
+  git push origin main
+
+Q: 如何回退版本?
+A:
+  git log                    # 查看提交历史
+  git reset --hard <commit>  # 回退到指定提交
+  git push origin main --force
+
+
+==========================================
+详细说明请参考: 上传GitHub指南.md
+==========================================
+

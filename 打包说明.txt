@@ -1,0 +1,99 @@
+==========================================
+    FLML核心包打包说明
+==========================================
+
+一、前提条件
+
+1. 已安装JDK 11或更高版本
+   查看版本: java -version
+
+2. 已安装Maven 3.6或更高版本
+   查看版本: mvn -version
+
+3. GameCore模块已编译
+   如果未编译，先执行: mvn clean install
+
+
+二、打包步骤
+
+【方法一：使用Maven命令行】
+
+1. 在项目根目录构建所有模块:
+   mvn clean install -Dmaven.test.skip=true
+
+2. 进入flml-core目录:
+   cd flml-core
+
+3. 执行打包命令:
+   mvn clean package -Dmaven.test.skip=true
+
+4. 打包完成后，JAR文件位于:
+   flml-core/release/flml-core-1.0.0.jar
+
+
+【方法二：使用打包脚本（Windows）】
+
+1. 双击运行: build_flml_core.bat
+
+   或
+
+   在命令行执行:
+   build_flml_core.bat
+
+
+【方法三：使用Gradle】
+
+1. 进入flml-core目录:
+   cd flml-core
+
+2. 执行打包:
+   ./gradlew clean build
+
+3. 输出文件:
+   build/libs/flml-core-1.0.0.jar
+
+
+三、验证打包结果
+
+1. 检查文件是否存在:
+   flml-core/release/flml-core-1.0.0.jar
+
+2. 用压缩软件打开JAR包，确认包含:
+   - META-INF/MANIFEST.MF
+   - META-INF/flml.properties
+   - com/freedomland/modloader/ (FLML加载器)
+   - com/freedomland/api/ (FLAPI接口)
+   - com/freedomland/flml/ (Bootstrap类)
+
+3. 检查MANIFEST.MF内容:
+   - Main-Class: com.freedomland.flml.loader.FLModLoaderBootstrap
+   - FLML-Official: true
+   - Game-Version: 1.0.0
+
+
+四、部署到游戏
+
+将打包好的JAR文件复制到游戏的mods目录:
+
+源文件: flml-core/release/flml-core-1.0.0.jar
+目标: GameCore/mods/flml-core-1.0.0.jar
+
+游戏启动时会自动校验并加载。
+
+
+五、常见问题
+
+Q: 打包失败，提示找不到GameCore模块
+A: 先在项目根目录执行: mvn clean install
+
+Q: JAR文件不包含modloader或api包
+A: 检查pom.xml中的filters配置是否正确
+
+Q: 打包时间过长
+A: 这是正常的，maven-shade-plugin需要合并依赖
+
+
+==========================================
+更多详细信息请参考: docs/FLML_官方核心包打包及部署规范.md
+==========================================
+

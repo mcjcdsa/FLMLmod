@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Main-Class: com.freedomland.flml.loader.FLModLoaderBootstrap
+FLML-Official: true
+Game-Version: 1.0.0
+API-Version: 1.0.0
+Implementation-Title: Freedom Land Mod Loader Core
+Implementation-Version: 1.0.0
+Implementation-Vendor: FreedomLand Development Team
+Built-By: Maven
+Created-By: Apache Maven
+
